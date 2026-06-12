@@ -11,7 +11,7 @@ Run:
     streamlit run app.py
 
 Notes:
-- EDINET API v2 requires an API key. Enter it in the sidebar or EDINET tab.
+- EDINET API v2 requires an API key. Configure it in Streamlit Secrets or environment variables.
 - SEC requires a descriptive User-Agent with contact information.
 - This is an MVP: extraction uses heuristics and should be validated before commercial use.
 """
@@ -620,33 +620,11 @@ st.set_page_config(page_title=APP_NAME, page_icon="📈", layout="wide")
 st.title("📈 開示×マクロAIサーチ MVP")
 st.caption(f"Version {APP_VERSION} / EDINET・SEC・BLS・World Bank・U.S. Treasury Fiscal Data の公開APIを使う試作品")
 
-with st.sidebar:
-    st.header("共通設定")
-
-    if EDINET_API_KEY_DEFAULT:
-        st.success("EDINET APIキーはサーバー側で設定済みです。")
-        if st.toggle("EDINET APIキーを手動で上書きする", value=False):
-            edinet_key = st.text_input(
-                "EDINET APIキー",
-                type="password",
-                help="通常は空でOKです。検証用に別キーを使う場合だけ入力してください。",
-            )
-        else:
-            edinet_key = EDINET_API_KEY_DEFAULT
-    else:
-        edinet_key = st.text_input(
-            "EDINET APIキー",
-            type="password",
-            help="金融庁EDINET API v2の利用にはAPIキーが必要です。本番公開時は環境変数またはStreamlit secretsに設定してください。",
-        )
-
-    sec_ua = st.text_input(
-        "SEC User-Agent",
-        value=SEC_USER_AGENT_DEFAULT,
-        help="SECは連絡先入りUser-Agentを求めています。例: YourSiteName your@email.com。本番公開時は環境変数またはStreamlit secretsに設定してください。",
-    )
-    st.markdown("---")
-    st.warning("投資助言ではありません。自動抽出結果は必ず原文で検証してください。")
+# Public UI users should not see API keys or operator settings.
+# Configure these values in Streamlit Cloud Secrets, .streamlit/secrets.toml,
+# or environment variables on the server.
+edinet_key = EDINET_API_KEY_DEFAULT
+sec_ua = SEC_USER_AGENT_DEFAULT
 
 jp_tab, us_tab, macro_tab, about_tab = st.tabs(["🇯🇵 EDINET 有報AIサーチ", "🇺🇸 SEC 開示チェッカー", "🌐 マクロ投資ダッシュボード", "README"])
 
@@ -735,7 +713,7 @@ with jp_tab:
             else:
                 st.error("前年・今年の両方を入力してください。")
     elif not edinet_key:
-        st.info("EDINETタブを使うには、左サイドバーにEDINET APIキーを入力してください。")
+        st.info("EDINET機能は現在、管理者側のAPI設定が未完了のため利用できません。")
 
 with us_tab:
     st.subheader("🇺🇸 SEC 開示チェッカー")
