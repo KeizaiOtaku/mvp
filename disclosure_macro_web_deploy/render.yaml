@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: disclosure-macro-mvp
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run app.py --server.address=0.0.0.0 --server.port=$PORT --server.headless=true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SEC_USER_AGENT
+        value: DisclosureMacroMVP your-email@example.com
+      - key: EDINET_API_KEY
+        sync: false
