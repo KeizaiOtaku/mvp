@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import base64
+import html
 import json
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -19,6 +21,7 @@ SUMMARY_PDF_CANDIDATES = [
     DATA_DIR / "summary.pdf",
     DATA_DIR / "edinet_summary.pdf",
 ]
+BRAND_IMAGE_PATH = DATA_DIR / "brand_cat.png"
 
 
 st.set_page_config(
@@ -89,6 +92,50 @@ def download_button_for_file(label: str, path: Path, mime: str) -> None:
     st.caption(f"{path.name} / {file_size_label(path)}")
 
 
+def image_to_data_uri(path: Path) -> Optional[str]:
+    if not path.exists():
+        return None
+    try:
+        encoded = base64.b64encode(path.read_bytes()).decode("ascii")
+        return f"data:image/png;base64,{encoded}"
+    except Exception:
+        return None
+
+
+def render_corner_image() -> None:
+    data_uri = image_to_data_uri(BRAND_IMAGE_PATH)
+    if not data_uri:
+        return
+
+    st.markdown(
+        f"""
+        <style>
+        .corner-brand-image {{
+            position: fixed;
+            top: 0.75rem;
+            left: 1.0rem;
+            width: 92px;
+            height: 92px;
+            object-fit: cover;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            z-index: 9999;
+        }}
+        @media (max-width: 900px) {{
+            .corner-brand-image {{
+                position: static;
+                width: 76px;
+                height: 76px;
+                margin-bottom: 0.6rem;
+            }}
+        }}
+        </style>
+        <img class="corner-brand-image" src="{data_uri}" alt="相場大好きマン アプリ画像">
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def get_secret(path: str, default: str = "") -> str:
     """Read nested Streamlit secrets using dot notation, e.g. github.owner."""
     cur: Any = st.secrets
@@ -98,6 +145,100 @@ def get_secret(path: str, default: str = "") -> str:
         return str(cur).strip()
     except Exception:
         return default
+
+
+def render_right_links() -> None:
+    """Render configurable social links in the right-side margin.
+
+    Set URLs in Streamlit Secrets:
+
+    [links]
+    note = "https://note.com/..."
+    x = "https://x.com/..."
+    blogger = "https://...blogspot.com/"
+    """
+    links = [
+        ("note", "note", get_secret("links.note")),
+        ("X", "X", get_secret("links.x")),
+        ("Blogger", "Blogger", get_secret("links.blogger")),
+    ]
+    active_links = [(label, css_class, url) for label, css_class, url in links if url]
+    if not active_links:
+        return
+
+    items_html = ""
+    for label, css_class, url in active_links:
+        safe_label = html.escape(label)
+        safe_url = html.escape(url, quote=True)
+        safe_class = html.escape(css_class.lower())
+        items_html += (
+            f'<a class="right-social-link right-social-link-{safe_class}" '
+            f'href="{safe_url}" target="_blank" rel="noopener noreferrer">{safe_label}</a>'
+        )
+
+    st.markdown(
+        f"""
+        <style>
+        .right-social-box {{
+            position: fixed;
+            top: 7.5rem;
+            right: 1.0rem;
+            width: 136px;
+            padding: 0.75rem 0.7rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.92);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            z-index: 9998;
+        }}
+        .right-social-title {{
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }}
+        .right-social-link {{
+            display: block;
+            text-align: center;
+            text-decoration: none !important;
+            font-weight: 700;
+            font-size: 0.92rem;
+            color: #333 !important;
+            padding: 0.46rem 0.5rem;
+            margin: 0.36rem 0;
+            border-radius: 999px;
+            background: #f4f4f5;
+            border: 1px solid rgba(0,0,0,0.07);
+        }}
+        .right-social-link:hover {{
+            background: #e9ecef;
+            transform: translateY(-1px);
+        }}
+        @media (max-width: 1100px) {{
+            .right-social-box {{
+                position: static;
+                width: auto;
+                margin: 0.5rem 0 1.2rem 0;
+                box-shadow: none;
+            }}
+            .right-social-title {{
+                text-align: left;
+            }}
+            .right-social-link {{
+                display: inline-block;
+                min-width: 88px;
+                margin-right: 0.35rem;
+            }}
+        }}
+        </style>
+        <div class="right-social-box">
+            <div class="right-social-title">リンク</div>
+            {items_html}
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
 
 def dispatch_github_workflow(
@@ -236,6 +377,9 @@ def render_admin_panel() -> None:
 # Public UI
 # -----------------------------
 def render_public_page() -> None:
+    render_corner_image()
+    render_right_links()
+
     st.markdown(
         """
         <div style="font-size: 1.5rem; font-weight: 700; color: #555; margin-bottom: 0.3rem;">
