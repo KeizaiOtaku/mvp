@@ -88,14 +88,6 @@ def get_secret(path: str, default: str = "") -> str:
         return default
 
 
-def parse_positive_int(value: Any, default: int, min_value: int = 0) -> int:
-    try:
-        parsed = int(value)
-        return max(min_value, parsed)
-    except Exception:
-        return default
-
-
 def dispatch_github_workflow(
     *,
     owner: str,
@@ -181,15 +173,27 @@ def render_admin_panel() -> None:
     with st.sidebar.expander("更新条件", expanded=True):
         days = st.number_input("対象日数", min_value=1, max_value=31, value=7, step=1)
         end_offset_days = st.number_input(
-            "終了日オフセット", min_value=0, max_value=7, value=1, step=1,
+            "終了日オフセット",
+            min_value=0,
+            max_value=7,
+            value=1,
+            step=1,
             help="1なら昨日まで、0なら今日まで。",
         )
         max_docs = st.number_input(
-            "最大処理文書数", min_value=0, max_value=10000, value=20, step=10,
+            "最大処理文書数",
+            min_value=0,
+            max_value=10000,
+            value=20,
+            step=10,
             help="0で全件。テスト時は20〜100推奨。",
         )
         max_chars = st.number_input(
-            "抽出テキスト最大文字数", min_value=100, max_value=50000, value=2000, step=500,
+            "抽出テキスト最大文字数",
+            min_value=100,
+            max_value=50000,
+            value=2000,
+            step=500,
         )
         sleep_sec = st.text_input("APIアクセス間隔 秒", value="0.2")
 
@@ -228,15 +232,18 @@ def render_public_page() -> None:
     document_count = metadata.get("document_count")
 
     col1, col2 = st.columns(2)
+
+    # st.metricだと対象期間が大きすぎるため、対象期間だけ小さめに表示します。
     col1.markdown("**対象期間**")
     col1.markdown(
-    f"""
-    <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.3;">
-        {period}
-    </div>
-    """,
-    unsafe_allow_html=True,
+        f"""
+        <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.3;">
+            {period}
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
+
     col2.metric("対象文書数", format_count(document_count))
 
     st.divider()
@@ -250,6 +257,17 @@ def render_public_page() -> None:
         "文書一覧CSVをダウンロード",
         DOC_LIST_CSV_PATH,
         "text/csv",
+    )
+
+    st.markdown(
+        """
+        <div style="font-size: 0.85rem; line-height: 1.7; color: #555; margin-top: 1.0rem;">
+            本データは、EDINET閲覧（提出）サイトで公開された開示情報をもとに、抽出および加工したものです。<br>
+            本データは金融庁またはEDINETが作成および保証するものではありません。<br>
+            正確な内容は必ずEDINET上の原文をご確認ください。また、本データの二次配布は禁止いたします。著作権侵害に該当すると思われる方に対しては、法的措置を検討します。
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
 
     if metadata:
