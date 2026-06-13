@@ -279,7 +279,7 @@ def render_public_page() -> None:
         st.caption("要約PDFはまだアップロードされていません。")
     else:
         download_button_for_file(
-            "開示情報から作成した要約のダウンロード",
+            "要約レポートPDFのダウンロード(注意：手動アップロードのため、csvと日付が違う可能性あり)",
             summary_pdf_path,
             "application/pdf",
         )
