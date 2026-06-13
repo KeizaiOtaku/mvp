@@ -5,9 +5,6 @@ name: Weekly EDINET priority CSV
   schedule:
     - cron: "30 15 * * 0"
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 permissions:
   contents: write
 
@@ -19,87 +16,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Detect app directory
-        id: detect
-        shell: bash
+      - name: Create dummy CSV
         run: |
-          if [ -f "collect_weekly.py" ]; then
-            echo "base=." >> "$GITHUB_OUTPUT"
-          elif [ -f "mvp/collect_weekly.py" ]; then
-            echo "base=mvp" >> "$GITHUB_OUTPUT"
-          else
-            echo "collect_weekly.py not found in root or mvp/"
-            echo "--- files ---"
-            find . -maxdepth 3 -type f | sort
-            exit 1
-          fi
+          mkdir -p data
+          echo "created_at,message" > data/debug_test.csv
+          echo "$(date -u),GitHub Actions can create CSV" >> data/debug_test.csv
+          ls -la data
 
-      - name: Show files before run
-        run: |
-          echo "Base dir: ${{ steps.detect.outputs.base }}"
-          find . -maxdepth 3 -type f | sort
-          echo "--- data before ---"
-          ls -la "${{ steps.detect.outputs.base }}/data" || true
-
-      - name: Check EDINET API key
-        run: |
-          if [ -z "${{ secrets.EDINET_API_KEY }}" ]; then
-            echo "EDINET_API_KEY is not set."
-            exit 1
-          fi
-          echo "EDINET_API_KEY is set."
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r "${{ steps.detect.outputs.base }}/requirements.txt"
-
-      - name: Ensure data directory exists
-        run: |
-          mkdir -p "${{ steps.detect.outputs.base }}/data"
-
-      - name: Run EDINET extraction
-        env:
-          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-        run: |
-          python "${{ steps.detect.outputs.base }}/collect_weekly.py" \
-            --days 7 \
-            --end-offset-days 1 \
-            --max-docs 20 \
-            --max-chars 8000 \
-            --sleep-sec 0.2 \
-            --data-dir "${{ steps.detect.outputs.base }}/data"
-
-      - name: Show generated files
-        run: |
-          echo "--- generated data ---"
-          ls -la "${{ steps.detect.outputs.base }}/data" || true
-          echo "--- csv/json files ---"
-          find "${{ steps.detect.outputs.base }}/data" -type f | sort
-
-      - name: Fail if CSV was not generated
-        run: |
-          if ! ls "${{ steps.detect.outputs.base }}/data"/*.csv 1> /dev/null 2>&1; then
-            echo "No CSV files found."
-            echo "EDINET extraction did not generate CSV."
-            exit 1
-          fi
-
-      - name: Commit generated CSV files
+      - name: Commit dummy CSV
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add "${{ steps.detect.outputs.base }}/data"
+          git add data/debug_test.csv
 
           if git diff --staged --quiet; then
-            echo "No generated data changes to commit."
+            echo "No changes to commit."
           else
-            git commit -m "Update EDINET priority CSV"
+            git commit -m "Add debug CSV"
             git push
           fi
