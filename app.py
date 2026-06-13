@@ -260,7 +260,7 @@ col2.metric("処理文書数", processed_document_count)
 col3.metric("抽出行数", extracted_row_count)
 col4.metric("表示件数", f"{preview_row_count} / 最大{preview_limit}")
 
-    with st.expander("抽出対象キーワード・実行条件", expanded=False):
+with st.expander("抽出対象キーワード・実行条件", expanded=False):
         st.json({
             "keywords": meta.get("keywords", []),
             "max_docs": meta.get("max_docs"),
