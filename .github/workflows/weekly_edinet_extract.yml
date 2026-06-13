@@ -14,11 +14,11 @@ name: Weekly EDINET priority CSV
       max_docs:
         description: "最大処理件数。20ならテスト、0なら全件"
         required: false
-        default: "20"
+        default: "0"
       max_chars:
         description: "抽出テキスト最大文字数"
         required: false
-        default: "8000"
+        default: "10000"
       sleep_sec:
         description: "EDINET APIアクセス間隔 秒"
         required: false
