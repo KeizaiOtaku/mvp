@@ -46,6 +46,10 @@ def load_metadata() -> dict:
     except Exception:
         return {}
 
+@st.cache_data(ttl=60, show_spinner=False)
+def load_latest_csv(path: str) -> pd.DataFrame:
+    return pd.read_csv(path, dtype=str).fillna("")
+
 
 def load_csv(path: str):
     return pd.read_csv(path)
