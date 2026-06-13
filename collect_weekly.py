@@ -655,30 +655,30 @@ def collect_weekly(
     docs_df["generated_at_utc"] = generated_at_utc
     result_df["generated_at_utc"] = generated_at_utc
 
-    stamp = f"{start_date.isoformat()}_to_{end_date.isoformat()}"
+   stamp = f"{start_date.isoformat()}_to_{end_date.isoformat()}"https://github.com/KeizaiOtaku/mvp/blob/main/collect_weekly.py
 
-latest_csv = data_dir / "edinet_priority_sections_latest.csv"
-latest_full_gz = data_dir / "edinet_priority_sections_latest_full.csv.gz"
-latest_doc_list_csv = data_dir / "edinet_document_list_latest.csv"
-metadata_json = data_dir / "edinet_priority_sections_latest_metadata.json"
+    latest_csv = data_dir / "edinet_priority_sections_latest.csv"
+    latest_full_gz = data_dir / "edinet_priority_sections_latest_full.csv.gz"
+    latest_doc_list_csv = data_dir / "edinet_document_list_latest.csv"
+    metadata_json = data_dir / "edinet_priority_sections_latest_metadata.json"
 
-# Streamlit表示用の軽量版。
-# 全文CSVをそのままGitHubに置くと100MB制限に引っかかるため、表示用は先頭5000行に制限。
-preview_limit = 5000
-preview_df = result_df.head(preview_limit).copy()
+    # Streamlit表示用の軽量版。
+    # 全文CSVをそのままGitHubに置くと100MB制限に引っかかるため、表示用は先頭5000行に制限。
+    preview_limit = 5000
+    preview_df = result_df.head(preview_limit).copy()
 
-preview_df.to_csv(latest_csv, index=False, encoding="utf-8-sig")
+    preview_df.to_csv(latest_csv, index=False, encoding="utf-8-sig")
 
-# 全文版はgzip圧縮して保存。
-# pandasは .gz 拡張子なら自動でgzip圧縮する。
-result_df.to_csv(
-    latest_full_gz,
-    index=False,
-    encoding="utf-8-sig",
-    compression="gzip",
-)
+    # 全文版はgzip圧縮して保存。
+    # pandasは .gz 拡張子なら自動でgzip圧縮する。
+    result_df.to_csv(
+        latest_full_gz,
+        index=False,
+        encoding="utf-8-sig",
+        compression="gzip",
+    )
 
-docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
+    docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
 
     metadata = {
         "generated_at_utc": generated_at_utc,
@@ -692,8 +692,10 @@ docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
         "document_count": int(len(doc_rows)),
         "processed_document_count": int(len(process_rows)),
         "extracted_row_count": int(len(result_df)),
+        "preview_row_count": int(len(preview_df)),
+        "preview_limit": int(preview_limit),
         "latest_csv": str(latest_csv),
-        "dated_csv": str(dated_csv),
+        "latest_full_gz": str(latest_full_gz),
         "latest_doc_list_csv": str(latest_doc_list_csv),
     }
 
