@@ -210,7 +210,7 @@ def render_right_links() -> None:
     links = [
         ("note", "note", get_secret("links.note")),
         ("X", "X", get_secret("links.x")),
-        ("Blogger", "Blogger", get_secret("links.blogger")
+        ("Blogger", "Blogger", get_secret("links.blogger"),
         ("過去のPDF", "過去のPDF", get_secret("links.PDF")),
     ]
     active_links = [(label, css_class, url) for label, css_class, url in links if url]
