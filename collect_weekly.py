@@ -315,7 +315,9 @@ def collect_weekly(
     data_dir: Path,
 ) -> Dict[str, Any]:
     api_key = get_api_key()
-    generated_at_utc = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    generated_at_dt = datetime.now(timezone.utc)
+    generated_at_utc = generated_at_dt.isoformat(timespec="seconds")
+    generated_at_jst = generated_at_dt.astimezone(timezone(timedelta(hours=9))).isoformat(timespec="seconds")
     today_utc = datetime.now(timezone.utc).date()
     end_date = today_utc - timedelta(days=end_offset_days)
     start_date = end_date - timedelta(days=days - 1)
@@ -387,7 +389,11 @@ def collect_weekly(
     docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
 
     metadata = {
+        "created_at": generated_at_utc,
+        "created_at_utc": generated_at_utc,
+        "created_at_jst": generated_at_jst,
         "generated_at_utc": generated_at_utc,
+        "generated_at_jst": generated_at_jst,
         "start_date": start_date.isoformat(),
         "end_date": end_date.isoformat(),
         "days": days,
