@@ -1,7 +1,28 @@
 name: Weekly EDINET priority CSV
-
 "on":
   workflow_dispatch:
+    inputs:
+      days:
+        description: "取得対象日数"
+        required: false
+        default: "7"
+      end_offset_days:
+        description: "終了日のオフセット。1なら昨日まで、0なら今日まで"
+        required: false
+        default: "1"
+      max_docs:
+        description: "最大処理件数。20ならテスト、0なら全件"
+        required: false
+        default: "20"
+      max_chars:
+        description: "抽出テキスト最大文字数"
+        required: false
+        default: "8000"
+      sleep_sec:
+        description: "EDINET APIアクセス間隔 秒"
+        required: false
+        default: "0.2"
+
   schedule:
     - cron: "30 15 * * 0"
 
