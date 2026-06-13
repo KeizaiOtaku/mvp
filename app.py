@@ -228,7 +228,15 @@ def render_public_page() -> None:
     document_count = metadata.get("document_count")
 
     col1, col2 = st.columns(2)
-    col1.metric("対象期間", period)
+    col1.markdown("**対象期間**")
+    col1.markdown(
+    f"""
+    <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.3;">
+        {period}
+    </div>
+    """,
+    unsafe_allow_html=True,
+    )　
     col2.metric("対象文書数", format_count(document_count))
 
     st.divider()
