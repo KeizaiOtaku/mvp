@@ -244,7 +244,15 @@ def render_public_page() -> None:
         """,
         unsafe_allow_html=True,
     )
-    st.title("開示情報チェッカー(数十万ページの日本企業の公開情報を毎週要約)")
+    st.title("開示情報チェッカー")
+    st.markdown(
+        """
+        <div style="font-size: 1.05rem; font-weight: 600; color: #444; margin-top: -0.4rem; margin-bottom: 1.2rem;">
+            数十万ページの日本企業の公開情報を毎週要約
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     metadata = read_metadata()
 
@@ -257,7 +265,7 @@ def render_public_page() -> None:
     col1.markdown("**対象期間**")
     col1.markdown(
         f"""
-        <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.3;">
+        <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.3;">
             {period}
         </div>
         """,
@@ -273,10 +281,10 @@ def render_public_page() -> None:
         st.button(
             "要約レポートPDFのダウンロード(注意：手動アップロードのため、csvと日付が違う可能性あり)",
             disabled=True,
-            help="管理者がPDFをアップロードすると有効になります。",
+            help="管理者がPDFを data/kaiji_summary.pdf としてアップロードすると有効になります。",
             use_container_width=True,
         )
-        st.caption("要約PDFはまだアップロードされていません。")
+        st.caption("要約PDFはまだアップロードされていません。管理者は `data/kaiji_summary.pdf` としてPDFを配置してください。")
     else:
         download_button_for_file(
             "要約レポートPDFのダウンロード(注意：手動アップロードのため、csvと日付が違う可能性あり)",
