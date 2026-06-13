@@ -1,28 +1,7 @@
 name: Weekly EDINET priority CSV
 
-on:
+"on":
   workflow_dispatch:
-    inputs:
-      days:
-        description: "取得対象日数"
-        required: false
-        default: "7"
-      end_offset_days:
-        description: "終了日のオフセット。1ならJST昨日まで、0ならJST今日まで"
-        required: false
-        default: "1"
-      max_docs:
-        description: "最大処理件数。最初のテストは20推奨。0で無制限"
-        required: false
-        default: "20"
-      max_chars:
-        description: "抽出テキスト最大文字数"
-        required: false
-        default: "8000"
-      sleep_sec:
-        description: "EDINET APIアクセス間隔 秒"
-        required: false
-        default: "0.2"
   schedule:
     - cron: "30 15 * * 0"
 
@@ -41,69 +20,3 @@ jobs:
         run: |
           pwd
           ls -la
-          echo "--- .github/workflows ---"
-          ls -la .github/workflows || true
-
-      - name: Check EDINET API key
-        run: |
-          if [ -z "${{ secrets.EDINET_API_KEY }}" ]; then
-            echo "EDINET_API_KEY is not set in GitHub Actions secrets."
-            exit 1
-          fi
-          echo "EDINET_API_KEY is set."
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Resolve parameters
-        id: params
-        shell: bash
-        run: |
-          DAYS="${{ github.event.inputs.days }}"
-          END_OFFSET_DAYS="${{ github.event.inputs.end_offset_days }}"
-          MAX_DOCS="${{ github.event.inputs.max_docs }}"
-          MAX_CHARS="${{ github.event.inputs.max_chars }}"
-          SLEEP_SEC="${{ github.event.inputs.sleep_sec }}"
-
-          echo "days=${DAYS:-7}" >> "$GITHUB_OUTPUT"
-          echo "end_offset_days=${END_OFFSET_DAYS:-1}" >> "$GITHUB_OUTPUT"
-          echo "max_docs=${MAX_DOCS:-20}" >> "$GITHUB_OUTPUT"
-          echo "max_chars=${MAX_CHARS:-8000}" >> "$GITHUB_OUTPUT"
-          echo "sleep_sec=${SLEEP_SEC:-0.2}" >> "$GITHUB_OUTPUT"
-
-      - name: Run EDINET extraction
-        env:
-          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
-        run: |
-          python collect_weekly.py \
-            --days ${{ steps.params.outputs.days }} \
-            --end-offset-days ${{ steps.params.outputs.end_offset_days }} \
-            --max-docs ${{ steps.params.outputs.max_docs }} \
-            --max-chars ${{ steps.params.outputs.max_chars }} \
-            --sleep-sec ${{ steps.params.outputs.sleep_sec }}
-
-      - name: Show generated data
-        run: |
-          echo "--- data files ---"
-          ls -la data || true
-
-      - name: Commit updated CSV files
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
-          git add data || true
-
-          if git diff --staged --quiet; then
-            echo "No generated data changes to commit."
-          else
-            git commit -m "Update EDINET priority CSV"
-            git push
-          fi
