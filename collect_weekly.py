@@ -657,14 +657,28 @@ def collect_weekly(
 
     stamp = f"{start_date.isoformat()}_to_{end_date.isoformat()}"
 
-    dated_csv = data_dir / f"edinet_priority_sections_{stamp}.csv"
-    latest_csv = data_dir / "edinet_priority_sections_latest.csv"
-    latest_doc_list_csv = data_dir / "edinet_document_list_latest.csv"
-    metadata_json = data_dir / "edinet_priority_sections_latest_metadata.json"
+latest_csv = data_dir / "edinet_priority_sections_latest.csv"
+latest_full_gz = data_dir / "edinet_priority_sections_latest_full.csv.gz"
+latest_doc_list_csv = data_dir / "edinet_document_list_latest.csv"
+metadata_json = data_dir / "edinet_priority_sections_latest_metadata.json"
 
-    result_df.to_csv(dated_csv, index=False, encoding="utf-8-sig")
-    result_df.to_csv(latest_csv, index=False, encoding="utf-8-sig")
-    docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
+# Streamlit表示用の軽量版。
+# 全文CSVをそのままGitHubに置くと100MB制限に引っかかるため、表示用は先頭5000行に制限。
+preview_limit = 5000
+preview_df = result_df.head(preview_limit).copy()
+
+preview_df.to_csv(latest_csv, index=False, encoding="utf-8-sig")
+
+# 全文版はgzip圧縮して保存。
+# pandasは .gz 拡張子なら自動でgzip圧縮する。
+result_df.to_csv(
+    latest_full_gz,
+    index=False,
+    encoding="utf-8-sig",
+    compression="gzip",
+)
+
+docs_df.to_csv(latest_doc_list_csv, index=False, encoding="utf-8-sig")
 
     metadata = {
         "generated_at_utc": generated_at_utc,
