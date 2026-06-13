@@ -102,35 +102,85 @@ def image_to_data_uri(path: Path) -> Optional[str]:
         return None
 
 
-def render_corner_image() -> None:
+def render_title_header() -> None:
+    """Render the brand image near the main title instead of the far screen corner."""
     data_uri = image_to_data_uri(BRAND_IMAGE_PATH)
-    if not data_uri:
-        return
+    image_html = ""
+    if data_uri:
+        image_html = (
+            f'<img class="title-brand-image" src="{data_uri}" '
+            f'alt="相場大好きマン アプリ画像">'
+        )
 
     st.markdown(
         f"""
         <style>
-        .corner-brand-image {{
-            position: fixed;
-            top: 0.75rem;
-            left: 1.0rem;
-            width: 92px;
-            height: 92px;
-            object-fit: cover;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
-            z-index: 9999;
+        .title-header-wrap {{
+            display: flex;
+            align-items: center;
+            gap: 1.05rem;
+            margin: 0.4rem 0 1.35rem 0;
         }}
-        @media (max-width: 900px) {{
-            .corner-brand-image {{
-                position: static;
-                width: 76px;
-                height: 76px;
-                margin-bottom: 0.6rem;
+        .title-brand-image {{
+            width: 96px;
+            height: 96px;
+            object-fit: cover;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+            flex-shrink: 0;
+        }}
+        .title-text-block {{
+            min-width: 0;
+        }}
+        .site-brand-text {{
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 0.15rem;
+        }}
+        .site-main-title {{
+            font-size: 2.45rem;
+            font-weight: 800;
+            color: #111827;
+            line-height: 1.12;
+            margin: 0;
+        }}
+        .site-subtitle {{
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #444;
+            line-height: 1.35;
+            margin-top: 0.4rem;
+        }}
+        @media (max-width: 700px) {{
+            .title-header-wrap {{
+                gap: 0.75rem;
+                align-items: flex-start;
+            }}
+            .title-brand-image {{
+                width: 72px;
+                height: 72px;
+                border-radius: 12px;
+            }}
+            .site-brand-text {{
+                font-size: 1.0rem;
+            }}
+            .site-main-title {{
+                font-size: 1.9rem;
+            }}
+            .site-subtitle {{
+                font-size: 1.0rem;
             }}
         }}
         </style>
-        <img class="corner-brand-image" src="{data_uri}" alt="相場大好きマン アプリ画像">
+        <div class="title-header-wrap">
+            {image_html}
+            <div class="title-text-block">
+                <div class="site-brand-text">相場★大好きマン★アプリ</div>
+                <div class="site-main-title">開示情報チェッカー</div>
+                <div class="site-subtitle">数十万ページの日本企業の公開情報を毎週要約</div>
+            </div>
+        </div>
         """,
         unsafe_allow_html=True,
     )
@@ -377,26 +427,8 @@ def render_admin_panel() -> None:
 # Public UI
 # -----------------------------
 def render_public_page() -> None:
-    render_corner_image()
     render_right_links()
-
-    st.markdown(
-        """
-        <div style="font-size: 1.5rem; font-weight: 700; color: #555; margin-bottom: 0.3rem;">
-            相場★大好きマン★アプリ
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    st.title("開示情報チェッカー")
-    st.markdown(
-        """
-        <div style="font-size: 1.5rem; font-weight: 600; color: #444; margin-top: -0.4rem; margin-bottom: 1.2rem;">
-            数十万ページの日本企業の公開情報を毎週要約
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    render_title_header()
 
     metadata = read_metadata()
 
