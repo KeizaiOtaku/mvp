@@ -62,35 +62,35 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r mvp/requirements.txt
+          pip install -r requirements.txt
 
       - name: Ensure data directory exists
         run: |
-          mkdir -p mvp/data
+          mkdir -p data
 
       - name: Run EDINET extraction
         env:
           EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
         run: |
-          python mvp/collect_weekly.py \
+          python collect_weekly.py \
             --days ${{ github.event.inputs.days || '7' }} \
             --end-offset-days ${{ github.event.inputs.end_offset_days || '1' }} \
             --max-docs ${{ github.event.inputs.max_docs || '20' }} \
             --max-chars ${{ github.event.inputs.max_chars || '8000' }} \
             --sleep-sec ${{ github.event.inputs.sleep_sec || '0.2' }} \
-            --data-dir mvp/data
+            --data-dir data
 
       - name: Show generated files
         run: |
-          echo "--- mvp/data ---"
-          ls -la mvp/data || true
+          echo "--- data ---"
+          ls -la data || true
           echo "--- csv/json ---"
-          find mvp/data -type f | sort
+          find data -type f | sort
 
       - name: Fail if latest CSV was not generated
         run: |
-          if [ ! -f "mvp/data/edinet_priority_sections_latest.csv" ]; then
-            echo "mvp/data/edinet_priority_sections_latest.csv was not generated."
+          if [ ! -f "data/edinet_priority_sections_latest.csv" ]; then
+            echo "data/edinet_priority_sections_latest.csv was not generated."
             exit 1
           fi
 
@@ -99,7 +99,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add mvp/data
+          git add data
 
           if git diff --staged --quiet; then
             echo "No generated data changes to commit."
