@@ -273,7 +273,7 @@ def render_public_page() -> None:
         st.button(
             "開示情報から作成した要約のダウンロード",
             disabled=True,
-            help="管理者がPDFを data/kaiji_summary.pdf としてアップロードすると有効になります。",
+            help="管理者がPDFをアップロードすると有効になります。",
             use_container_width=True,
         )
         st.caption("要約PDFはまだアップロードされていません。管理者は `data/kaiji_summary.pdf` としてPDFを配置してください。")
