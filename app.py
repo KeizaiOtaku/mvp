@@ -244,7 +244,7 @@ def render_public_page() -> None:
         """,
         unsafe_allow_html=True,
     )
-    st.title("開示情報チェッカー")
+    st.title("開示情報チェッカー(数十万ページの日本企業の公開情報を毎週要約)")
 
     metadata = read_metadata()
 
@@ -257,7 +257,7 @@ def render_public_page() -> None:
     col1.markdown("**対象期間**")
     col1.markdown(
         f"""
-        <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.3;">
+        <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.3;">
             {period}
         </div>
         """,
