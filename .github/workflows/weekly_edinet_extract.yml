@@ -5,6 +5,9 @@ name: Weekly EDINET priority CSV
   schedule:
     - cron: "30 15 * * 0"
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 permissions:
   contents: write
 
@@ -16,7 +19,67 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Show files
+      - name: Show repository files before run
         run: |
           pwd
+          echo "--- root files ---"
           ls -la
+          echo "--- data before ---"
+          ls -la data || true
+
+      - name: Check EDINET API key
+        run: |
+          if [ -z "${{ secrets.EDINET_API_KEY }}" ]; then
+            echo "EDINET_API_KEY is not set."
+            exit 1
+          fi
+          echo "EDINET_API_KEY is set."
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure data directory exists
+        run: |
+          mkdir -p data
+
+      - name: Run EDINET extraction
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+        run: |
+          python collect_weekly.py --days 7 --end-offset-days 1 --max-docs 20 --max-chars 8000 --sleep-sec 0.2
+
+      - name: Show generated files
+        run: |
+          echo "--- data after ---"
+          ls -la data || true
+          echo "--- all csv/json files ---"
+          find . -maxdepth 4 -type f \( -name "*.csv" -o -name "*.json" \) -print
+
+      - name: Fail if CSV was not generated
+        run: |
+          if ! ls data/*.csv 1> /dev/null 2>&1; then
+            echo "No CSV files found in data/."
+            echo "The collector did not generate CSV files, or wrote them to a different folder."
+            exit 1
+          fi
+
+      - name: Commit generated CSV files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data
+
+          if git diff --staged --quiet; then
+            echo "No generated data changes to commit."
+          else
+            git commit -m "Update EDINET priority CSV"
+            git push
+          fi
