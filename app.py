@@ -236,7 +236,7 @@ def render_public_page() -> None:
     </div>
     """,
     unsafe_allow_html=True,
-    )　
+    )
     col2.metric("対象文書数", format_count(document_count))
 
     st.divider()
