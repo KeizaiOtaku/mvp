@@ -271,12 +271,12 @@ def render_public_page() -> None:
     summary_pdf_path = find_summary_pdf()
     if summary_pdf_path is None:
         st.button(
-            "開示情報から作成した要約のダウンロード",
+            "開示情報から作成した要約のダウンロード(手動アップロードのため、csvと日付がずれている可能性があることに注意。)",
             disabled=True,
             help="管理者がPDFをアップロードすると有効になります。",
             use_container_width=True,
         )
-        st.caption("要約PDFはまだアップロードされていません。管理者は `data/kaiji_summary.pdf` としてPDFを配置してください。")
+        st.caption("要約PDFはまだアップロードされていません。")
     else:
         download_button_for_file(
             "開示情報から作成した要約のダウンロード",
