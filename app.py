@@ -271,7 +271,7 @@ def render_public_page() -> None:
     summary_pdf_path = find_summary_pdf()
     if summary_pdf_path is None:
         st.button(
-            "開示情報から作成した要約のダウンロード注意！手動アップロードのため、csvと日付がずれている可能性もあります。",
+            "要約レポートのダウンロード(注意：手動アップロードのため、csvと日付が違う可能性あり)",
             disabled=True,
             help="管理者がPDFをアップロードすると有効になります。",
             use_container_width=True,
