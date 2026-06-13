@@ -231,7 +231,7 @@ def render_public_page() -> None:
     col1.markdown("**対象期間**")
     col1.markdown(
     f"""
-    <div style="font-size: 1.3rem; font-weight: 900; line-height: 1.3;">
+    <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.3;">
         {period}
     </div>
     """,
