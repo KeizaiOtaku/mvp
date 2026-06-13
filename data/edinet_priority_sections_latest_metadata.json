@@ -1,30 +1,16 @@
 {
-  "generated_at_jst": "2026-06-13T20:20:39+09:00",
+  "generated_at_utc": "2026-06-13T11:27:38+00:00",
   "start_date": "2026-06-06",
   "end_date": "2026-06-12",
   "days": 7,
-  "raw_document_count": 1714,
-  "target_document_count": 1067,
-  "output_row_count": 97,
+  "end_offset_days": 1,
   "max_docs": 20,
   "max_chars": 8000,
-  "keywords": [
-    "有価証券報告書",
-    "半期報告書",
-    "四半期報告書",
-    "臨時報告書",
-    "大量保有報告書",
-    "変更報告書",
-    "訂正報告書"
-  ],
+  "sleep_sec": 0.2,
+  "document_count": 1714,
+  "processed_document_count": 20,
+  "extracted_row_count": 1140,
   "latest_csv": "data/edinet_priority_sections_latest.csv",
   "dated_csv": "data/edinet_priority_sections_2026-06-06_to_2026-06-12.csv",
-  "section_counts": {
-    "継続企業の前提": 31,
-    "臨時報告書：提出事由・発生事実": 28,
-    "大量保有：保有割合・増減": 14,
-    "大量保有：保有目的": 13,
-    "大株主の状況": 7,
-    "重要な後発事象": 4
-  }
+  "latest_doc_list_csv": "data/edinet_document_list_latest.csv"
 }
