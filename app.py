@@ -244,14 +244,21 @@ def render_data_view() -> None:
         st.code("Actions → Weekly EDINET priority CSV → Run workflow", language="text")
         st.stop()
 
-    meta = load_metadata()
-    df = load_latest_csv(str(LATEST_CSV))
+metadata = load_metadata()
+df = load_latest_csv(str(LATEST_CSV))
 
-    c1, c2, c3, c4 = st.columns(4)
-    c1.metric("対象期間", f"{meta.get('start_date', '?')}〜{meta.get('end_date', '?')}")
-    c2.metric("対象文書数", f"{int(meta.get('target_document_count', len(df))):,}" if str(meta.get('target_document_count', '')).isdigit() else f"{meta.get('target_document_count', len(df))}")
-    c3.metric("出力行数", f"{len(df):,}")
-    c4.metric("作成日時", meta.get("generated_at_jst", "不明"))
+document_count = metadata.get("document_count", "不明")
+processed_document_count = metadata.get("processed_document_count", "不明")
+extracted_row_count = metadata.get("extracted_row_count", "不明")
+preview_row_count = metadata.get("preview_row_count", len(df))
+preview_limit = metadata.get("preview_limit", 5000)
+
+col1, col2, col3, col4 = st.columns(4)
+
+col1.metric("対象文書数", document_count)
+col2.metric("処理文書数", processed_document_count)
+col3.metric("抽出行数", extracted_row_count)
+col4.metric("表示件数", f"{preview_row_count} / 最大{preview_limit}")
 
     with st.expander("抽出対象キーワード・実行条件", expanded=False):
         st.json({
