@@ -238,7 +238,7 @@ def render_admin_panel() -> None:
 def render_public_page() -> None:
     st.markdown(
         """
-        <div style="font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 0.3rem;">
+        <div style="font-size: 1.5rem; font-weight: 700; color: #555; margin-bottom: 0.3rem;">
             相場★大好きマン★アプリ
         </div>
         """,
@@ -247,7 +247,7 @@ def render_public_page() -> None:
     st.title("開示情報チェッカー")
     st.markdown(
         """
-        <div style="font-size: 1.05rem; font-weight: 600; color: #444; margin-top: -0.4rem; margin-bottom: 1.2rem;">
+        <div style="font-size: 1.5rem; font-weight: 600; color: #444; margin-top: -0.4rem; margin-bottom: 1.2rem;">
             数十万ページの日本企業の公開情報を毎週要約
         </div>
         """,
@@ -265,7 +265,7 @@ def render_public_page() -> None:
     col1.markdown("**対象期間**")
     col1.markdown(
         f"""
-        <div style="font-size: 0.9rem; font-weight: 600; line-height: 1.3;">
+        <div style="font-size: 1.5rem; font-weight: 600; line-height: 1.3;">
             {period}
         </div>
         """,
