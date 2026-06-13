@@ -2,6 +2,11 @@ name: Weekly EDINET priority CSV
 
 "on":
   workflow_dispatch:
+    inputs:
+      max_docs:
+        description: "最大処理件数。テストは20、本番は0"
+        required: false
+        default: "20"
   schedule:
     - cron: "30 15 * * 0"
 
@@ -16,23 +21,69 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Create dummy CSV
+      - name: Show repository files
+        run: |
+          pwd
+          find . -maxdepth 3 -type f | sort
+
+      - name: Check EDINET API key
+        run: |
+          if [ -z "${{ secrets.EDINET_API_KEY }}" ]; then
+            echo "EDINET_API_KEY is not set."
+            exit 1
+          fi
+          echo "EDINET_API_KEY is set."
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Ensure data directory exists
         run: |
           mkdir -p data
-          echo "created_at,message" > data/debug_test.csv
-          echo "$(date -u),GitHub Actions can create CSV" >> data/debug_test.csv
-          ls -la data
 
-      - name: Commit dummy CSV
+      - name: Run EDINET extraction
+        env:
+          EDINET_API_KEY: ${{ secrets.EDINET_API_KEY }}
+        run: |
+          python collect_weekly.py \
+            --days 7 \
+            --end-offset-days 1 \
+            --max-docs ${{ github.event.inputs.max_docs || '20' }} \
+            --max-chars 8000 \
+            --sleep-sec 0.2 \
+            --data-dir data
+
+      - name: Show generated files
+        run: |
+          echo "--- data ---"
+          ls -la data || true
+          echo "--- csv/json ---"
+          find data -type f | sort
+
+      - name: Fail if CSV was not generated
+        run: |
+          if ! ls data/*.csv 1> /dev/null 2>&1; then
+            echo "No CSV files found in data/."
+            exit 1
+          fi
+
+      - name: Commit generated files
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add data/debug_test.csv
+          git add data
 
           if git diff --staged --quiet; then
-            echo "No changes to commit."
+            echo "No generated data changes to commit."
           else
-            git commit -m "Add debug CSV"
+            git commit -m "Update EDINET priority CSV"
             git push
           fi
