@@ -14,6 +14,11 @@ DATA_DIR = APP_DIR / "data"
 METADATA_PATH = DATA_DIR / "edinet_priority_sections_latest_metadata.json"
 FULL_CSV_GZ_PATH = DATA_DIR / "edinet_priority_sections_latest_full.csv.gz"
 DOC_LIST_CSV_PATH = DATA_DIR / "edinet_document_list_latest.csv"
+SUMMARY_PDF_CANDIDATES = [
+    DATA_DIR / "kaiji_summary.pdf",
+    DATA_DIR / "summary.pdf",
+    DATA_DIR / "edinet_summary.pdf",
+]
 
 
 st.set_page_config(
@@ -59,6 +64,13 @@ def file_size_label(path: Path) -> str:
     if size >= 1024:
         return f"{size / 1024:.1f} KB"
     return f"{size} B"
+
+
+def find_summary_pdf() -> Optional[Path]:
+    for path in SUMMARY_PDF_CANDIDATES:
+        if path.exists():
+            return path
+    return None
 
 
 def download_button_for_file(label: str, path: Path, mime: str) -> None:
@@ -224,6 +236,14 @@ def render_admin_panel() -> None:
 # Public UI
 # -----------------------------
 def render_public_page() -> None:
+    st.markdown(
+        """
+        <div style="font-size: 0.95rem; font-weight: 700; color: #555; margin-bottom: 0.3rem;">
+            相場★大好きマン★アプリ
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
     st.title("開示情報チェッカー")
 
     metadata = read_metadata()
@@ -248,6 +268,22 @@ def render_public_page() -> None:
 
     st.divider()
 
+    summary_pdf_path = find_summary_pdf()
+    if summary_pdf_path is None:
+        st.button(
+            "開示情報から作成した要約のダウンロード",
+            disabled=True,
+            help="管理者がPDFを data/kaiji_summary.pdf としてアップロードすると有効になります。",
+            use_container_width=True,
+        )
+        st.caption("要約PDFはまだアップロードされていません。管理者は `data/kaiji_summary.pdf` としてPDFを配置してください。")
+    else:
+        download_button_for_file(
+            "開示情報から作成した要約のダウンロード",
+            summary_pdf_path,
+            "application/pdf",
+        )
+
     download_button_for_file(
         "全文版CSVをダウンロード",
         FULL_CSV_GZ_PATH,
@@ -264,8 +300,7 @@ def render_public_page() -> None:
         <div style="font-size: 0.85rem; line-height: 1.7; color: #555; margin-top: 1.0rem;">
             本データは、EDINET閲覧（提出）サイトで公開された開示情報をもとに、抽出および加工したものです。<br>
             本データは金融庁またはEDINETが作成および保証するものではありません。<br>
-            正確な内容は必ずEDINET上の原文をご確認ください。<br>
-            本データの二次配布は禁止いたします。著作権侵害に該当すると思われる方に対しては、法的措置を検討します。
+            正確な内容は必ずEDINET上の原文をご確認ください。また、本データの二次配布は禁止いたします。著作権侵害に該当すると思われる方に対しては、法的措置を検討します。
         </div>
         """,
         unsafe_allow_html=True,
