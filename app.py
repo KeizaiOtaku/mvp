@@ -25,7 +25,7 @@ BRAND_IMAGE_PATH = DATA_DIR / "brand_cat.png"
 
 
 st.set_page_config(
-    page_title="開示情報チェッカー",
+    page_title="法定開示情報チェッカー",
     page_icon="📄",
     layout="centered",
 )
