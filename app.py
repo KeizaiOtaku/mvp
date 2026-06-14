@@ -199,28 +199,64 @@ def get_secret(path: str, default: str = "") -> str:
 
 
 def inject_google_analytics() -> None:
-    """Inject Google Analytics 4 tag when configured in Streamlit Secrets.
+    """Inject Google Analytics 4 into the parent Streamlit page.
 
     Streamlit Secrets example:
 
     [analytics]
     google_measurement_id = "G-XXXXXXXXXX"
+
+    The normal components.html approach puts the tag inside an iframe, so
+    Google's tag checker may say "Google tag was not detected". This script
+    tries to install the GA tag into the parent page head instead. If parent
+    access is blocked, it falls back to the component iframe.
     """
     measurement_id = get_secret("analytics.google_measurement_id")
     if not measurement_id:
         return
 
-    safe_measurement_id = html.escape(measurement_id, quote=True)
+    js_measurement_id = json.dumps(measurement_id)
 
     components.html(
         f"""
-        <!-- Google tag (gtag.js) -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id={safe_measurement_id}"></script>
         <script>
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){{dataLayer.push(arguments);}}
-          gtag('js', new Date());
-          gtag('config', '{safe_measurement_id}');
+        (function() {{
+          const measurementId = {js_measurement_id};
+          const scriptId = "ga4-script-" + measurementId;
+
+          function installGoogleTag(targetWindow) {{
+            const targetDocument = targetWindow.document;
+            if (!targetDocument || !targetDocument.head) {{
+              return;
+            }}
+
+            targetWindow.dataLayer = targetWindow.dataLayer || [];
+            targetWindow.gtag = targetWindow.gtag || function() {{
+              targetWindow.dataLayer.push(arguments);
+            }};
+
+            if (!targetDocument.getElementById(scriptId)) {{
+              const script = targetDocument.createElement("script");
+              script.id = scriptId;
+              script.async = true;
+              script.src = "https://www.googletagmanager.com/gtag/js?id=" + encodeURIComponent(measurementId);
+              targetDocument.head.appendChild(script);
+
+              targetWindow.gtag("js", new Date());
+              targetWindow.gtag("config", measurementId, {{
+                page_title: targetDocument.title,
+                page_location: targetWindow.location.href,
+                page_path: targetWindow.location.pathname + targetWindow.location.search
+              }});
+            }}
+          }}
+
+          try {{
+            installGoogleTag(window.parent);
+          }} catch (error) {{
+            installGoogleTag(window);
+          }}
+        }})();
         </script>
         """,
         height=0,
