@@ -177,7 +177,7 @@ def render_title_header() -> None:
             {image_html}
             <div class="title-text-block">
                 <div class="site-brand-text">相場★大好きマン★アプリ</div>
-                <div class="site-main-title">開示情報チェッカー</div>
+                <div class="site-main-title">法定開示情報チェッカー</div>
                 <div class="site-subtitle">数十万ページの日本企業の公開情報を毎週要約</div>
             </div>
         </div>
