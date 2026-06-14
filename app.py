@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 
 import requests
 import streamlit as st
+import streamlit.components.v1 as components
 
 
 APP_DIR = Path(__file__).resolve().parent
@@ -195,6 +196,36 @@ def get_secret(path: str, default: str = "") -> str:
         return str(cur).strip()
     except Exception:
         return default
+
+
+def inject_google_analytics() -> None:
+    """Inject Google Analytics 4 tag when configured in Streamlit Secrets.
+
+    Streamlit Secrets example:
+
+    [analytics]
+    google_measurement_id = "G-XXXXXXXXXX"
+    """
+    measurement_id = get_secret("analytics.google_measurement_id")
+    if not measurement_id:
+        return
+
+    safe_measurement_id = html.escape(measurement_id, quote=True)
+
+    components.html(
+        f"""
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id={safe_measurement_id}"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){{dataLayer.push(arguments);}}
+          gtag('js', new Date());
+          gtag('config', '{safe_measurement_id}');
+        </script>
+        """,
+        height=0,
+        width=0,
+    )
 
 
 def render_right_links() -> None:
@@ -510,6 +541,7 @@ def render_public_page() -> None:
 # Main
 # -----------------------------
 def main() -> None:
+    inject_google_analytics()
     render_admin_panel()
     render_public_page()
 
