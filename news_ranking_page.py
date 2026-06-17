@@ -1747,7 +1747,7 @@ def collect_and_rank(
         "ranking_candidates": 0,
     }
 
-    progress = st.progress(0, text="RSSを巡回中...") if (feeds and show_progress) else None
+    progress = st.progress(0, text="ニュース情報を収集中…") if (feeds and show_progress) else None
     total_feeds = max(1, len(feeds))
 
     for feed_i, cfg in enumerate(feeds):
@@ -2155,7 +2155,7 @@ def render_result_cards(df: pd.DataFrame) -> None:
 
 
 def render_news_ranking_page() -> None:
-    st.title("海外で注目されている日本のニュースランキング")
+    st.title("海外で話題の日本のニュース")
     st.markdown(
         """
         <div style="color:#000000; font-size:0.95rem; line-height:1.6; margin-top:0.25rem; margin-bottom:1rem;">
@@ -2240,7 +2240,7 @@ def render_news_ranking_page() -> None:
         fetch_feed.clear()
         collect_and_rank_cached.clear()
 
-    with st.spinner("RSSを巡回してランキングを作成しています..."):
+    with st.spinner("ニュース情報を収集中…"):
         df, err_df, stats = collect_and_rank_cached(
             auto_update_key=auto_update_key,
             selected_sources=tuple(selected_sources),
