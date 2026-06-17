@@ -7,7 +7,7 @@ from edinet_checker_page import render_edinet_checker_page
 
 
 st.set_page_config(
-    page_title="相場大好きマンアプリ",
+    page_title="相場★大好きマン★アプリ",
     page_icon="★",
     layout="wide",
 )
@@ -24,17 +24,17 @@ def go(page: str) -> None:
 
 def init_state() -> None:
     if "active_app" not in st.session_state:
-        # 初回表示は共通トップページ「相場大好きマンアプリ」をデフォルトにする。
+        # 初回表示は共通トップページ「相場★大好きマン★アプリ」をデフォルトにする。
         st.session_state["active_app"] = APP_HOME
 
 
 def render_global_sidebar() -> None:
-    st.sidebar.title("相場大好きマンアプリ")
+    st.sidebar.title("相場★大好きマン★アプリ")
     st.sidebar.caption("共通ページから各アプリへ切り替えられます。")
 
     if st.sidebar.button("トップページ", use_container_width=True):
         go(APP_HOME)
-    if st.sidebar.button("海外ニュースランキング", use_container_width=True):
+    if st.sidebar.button("海外で話題の日本のニュース", use_container_width=True):
         go(APP_NEWS)
     if st.sidebar.button("法定開示情報チェッカー", use_container_width=True):
         go(APP_EDINET)
@@ -43,11 +43,11 @@ def render_global_sidebar() -> None:
 def render_top_nav(current_label: str | None = None) -> None:
     c1, c2, c3 = st.columns([1.2, 1, 1])
     with c1:
-        if st.button("← 相場大好きマンアプリへ戻る", use_container_width=True):
+        if st.button("← 相場★大好きマン★アプリへ戻る", use_container_width=True):
             go(APP_HOME)
     with c2:
-        if current_label != "海外ニュースランキング":
-            if st.button("海外ニュースランキング", use_container_width=True):
+        if current_label != "海外で話題の日本のニュース":
+            if st.button("海外で話題の日本のニュース", use_container_width=True):
                 go(APP_NEWS)
     with c3:
         if current_label != "法定開示情報チェッカー":
@@ -84,7 +84,7 @@ def render_home() -> None:
             padding: 1.25rem 1.25rem 1.05rem 1.25rem;
             background: #ffffff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            min-height: 210px;
+            min-height: 150px;
             margin-bottom: 0.8rem;
         }
         .app-card-title {
@@ -99,20 +99,15 @@ def render_home() -> None:
             line-height: 1.65;
             margin-bottom: 0.8rem;
         }
-        .app-card-meta {
-            font-size: 0.84rem;
-            color: #4b5563;
-            line-height: 1.55;
-        }
         @media (max-width: 700px) {
             .home-title { font-size: 2.15rem; }
             .home-subtitle { font-size: 1.0rem; }
         }
         </style>
         <div class="home-wrap">
-            <div class="home-title">相場大好きマンアプリ</div>
+            <div class="home-title">相場★大好きマン★アプリ</div>
             <div class="home-subtitle">
-                使いたいアプリを選んでください。海外ニュースランキングと法定開示情報チェッカーを、同じページ内で切り替えて使えます。
+                使いたいアプリを選んでください。
             </div>
         </div>
         """,
@@ -127,12 +122,7 @@ def render_home() -> None:
             <div class="app-card">
                 <div class="app-card-title">法定開示情報チェッカー</div>
                 <div class="app-card-desc">
-                    EDINET等の公開情報から抽出した重要箇所・要約レポート・CSVを確認できます。
-                </div>
-                <div class="app-card-meta">
-                    ・要約PDFダウンロード<br>
-                    ・全文CSV / 文書一覧CSV<br>
-                    ・管理者のみGitHub Actions更新操作
+                    個別株投資の参考になる法定開示情報の要約レポートを読むことができます。
                 </div>
             </div>
             """,
@@ -145,20 +135,15 @@ def render_home() -> None:
         st.markdown(
             """
             <div class="app-card">
-                <div class="app-card-title">海外ニュースランキング</div>
+                <div class="app-card-title">海外で話題の日本のニュース</div>
                 <div class="app-card-desc">
-                    海外ニュースサイトを周回し、日本のニュースと思われる記事を独自アルゴリズムでランキング化します。
-                </div>
-                <div class="app-card-meta">
-                    ・タイトル＋リンク付きランキング<br>
-                    ・日本時間04:00の自動更新枠<br>
-                    ・管理者のみスコア内訳を確認可能
+                    海外ニュースサイトを自動周回し、日本関係のニュースをランキング化します。
                 </div>
             </div>
             """,
             unsafe_allow_html=True,
         )
-        if st.button("海外ニュースランキングを開く", type="primary", use_container_width=True):
+        if st.button("海外で話題の日本のニュースを開く", type="primary", use_container_width=True):
             go(APP_NEWS)
 
 
@@ -169,7 +154,7 @@ def main() -> None:
     active_app = st.session_state.get("active_app", APP_HOME)
 
     if active_app == APP_NEWS:
-        render_top_nav("海外ニュースランキング")
+        render_top_nav("海外で話題の日本のニュース")
         render_news_ranking_page()
     elif active_app == APP_EDINET:
         render_top_nav("法定開示情報チェッカー")
