@@ -2160,7 +2160,7 @@ def render_news_ranking_page() -> None:
         """
         <div style="color:#000000; font-size:0.95rem; line-height:1.6; margin-top:0.25rem; margin-bottom:1rem;">
             <div>海外ニュースサイトを周回して、日本のニュースと思われる記事を独自アルゴリズムでランキング化しています。</div>
-            <div>日本以外のニュースもわずかに含まれます。</div>
+            <div>リンク先で本文が読めます。日本以外のニュースもわずかに含まれます。</div>
             <div>翻訳機能は無いので、ブラウザの日本語翻訳などをお使いください。</div>
         </div>
         """,
