@@ -1747,7 +1747,7 @@ def collect_and_rank(
         "ranking_candidates": 0,
     }
 
-    progress = st.progress(0, text="ニュース情報を収集中…") if (feeds and show_progress) else None
+    progress = st.progress(0, text="ニュース情報を収集中…（約30秒）") if (feeds and show_progress) else None
     total_feeds = max(1, len(feeds))
 
     for feed_i, cfg in enumerate(feeds):
@@ -2159,8 +2159,9 @@ def render_news_ranking_page() -> None:
     st.markdown(
         """
         <div style="color:#000000; font-size:0.95rem; line-height:1.6; margin-top:0.25rem; margin-bottom:1rem;">
-            <div>海外ニュースサイトを周回して日本のニュースと思われる記事を独自アルゴリズムでランキング化しています。日本以外のニュースもわずかに含まれます。</div>
-            <div>翻訳機能は無いのでブラウザの日本語翻訳などをお使いください。</div>
+            <div>海外ニュースサイトを周回して、</div>
+            <div>日本のニュースと思われる記事を独自アルゴリズムでランキング化しています。日本以外のニュースもわずかに含まれます。</div>
+            <div>翻訳機能は無いので、ブラウザの日本語翻訳などをお使いください。</div>
         </div>
         """,
         unsafe_allow_html=True,
@@ -2240,7 +2241,7 @@ def render_news_ranking_page() -> None:
         fetch_feed.clear()
         collect_and_rank_cached.clear()
 
-    with st.spinner("ニュース情報を収集中…"):
+    with st.spinner("ニュース情報を収集中…（約30秒）"):
         df, err_df, stats = collect_and_rank_cached(
             auto_update_key=auto_update_key,
             selected_sources=tuple(selected_sources),
