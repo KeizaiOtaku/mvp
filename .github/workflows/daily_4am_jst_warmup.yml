@@ -1,0 +1,21 @@
+name: Daily 4AM JST Streamlit Warmup
+
+on:
+  schedule:
+    # 04:00 JST = 19:00 UTC
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+
+jobs:
+  warmup:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Access Streamlit app
+        env:
+          STREAMLIT_APP_URL: ${{ secrets.STREAMLIT_APP_URL }}
+        run: |
+          if [ -z "$STREAMLIT_APP_URL" ]; then
+            echo "STREAMLIT_APP_URL is not set"
+            exit 1
+          fi
+          curl -L --max-time 60 "$STREAMLIT_APP_URL"
