@@ -3,7 +3,7 @@ from __future__ import annotations
 import streamlit as st
 
 from news_ranking_page import render_news_ranking_page
-from edinet_checker_page import render_edinet_checker_page, render_right_links
+from edinet_checker_page import inject_google_analytics, render_edinet_checker_page, render_right_links
 
 
 st.set_page_config(
@@ -148,6 +148,7 @@ def render_home() -> None:
 
 
 def main() -> None:
+    inject_google_analytics()
     init_state()
     render_global_sidebar()
     # 法定開示情報チェッカー側で使っていた右側リンクを全ページで共通表示する。
