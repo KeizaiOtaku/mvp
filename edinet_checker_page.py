@@ -267,11 +267,12 @@ def render_right_links() -> None:
     x = "https://x.com/..."
     blogger = "https://...blogspot.com/"
     """
+    mailmag_url = get_secret("links.mailmag") or get_secret("links.PDF")
     links = [
         ("note", "note", get_secret("links.note")),
         ("X", "X", get_secret("links.x")),
         ("Blogger", "Blogger", get_secret("links.blogger")),
-        ("過去のPDF", "過去のPDF", get_secret("links.PDF")),
+        ("メルマガ", "mailmag", mailmag_url),
     ]
     active_links = [(label, css_class, url) for label, css_class, url in links if url]
     if not active_links:
@@ -488,7 +489,6 @@ def render_admin_panel() -> None:
 # Public UI
 # -----------------------------
 def render_public_page() -> None:
-    render_right_links()
     render_title_header()
 
     metadata = read_metadata()
