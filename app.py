@@ -3,7 +3,7 @@ from __future__ import annotations
 import streamlit as st
 
 from news_ranking_page import render_news_ranking_page
-from edinet_checker_page import render_edinet_checker_page
+from edinet_checker_page import render_edinet_checker_page, render_right_links
 
 
 st.set_page_config(
@@ -122,7 +122,7 @@ def render_home() -> None:
             <div class="app-card">
                 <div class="app-card-title">法定開示情報チェッカー</div>
                 <div class="app-card-desc">
-                    個別株投資の参考になる法定開示情報の要約レポートを読むことができます。
+                    個別株投資の参考になる、法定開示情報の要約レポートを読むことができます。
                 </div>
             </div>
             """,
@@ -150,6 +150,8 @@ def render_home() -> None:
 def main() -> None:
     init_state()
     render_global_sidebar()
+    # 法定開示情報チェッカー側で使っていた右側リンクを全ページで共通表示する。
+    render_right_links()
 
     active_app = st.session_state.get("active_app", APP_HOME)
 
