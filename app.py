@@ -24,9 +24,8 @@ def go(page: str) -> None:
 
 def init_state() -> None:
     if "active_app" not in st.session_state:
-        # 初回表示は法定開示情報チェッカーをデフォルトにする。
-        # 共通トップページへはサイドバー/上部ボタンから移動可能。
-        st.session_state["active_app"] = APP_EDINET
+        # 初回表示は共通トップページ「相場大好きマンアプリ」をデフォルトにする。
+        st.session_state["active_app"] = APP_HOME
 
 
 def render_global_sidebar() -> None:
@@ -126,26 +125,6 @@ def render_home() -> None:
         st.markdown(
             """
             <div class="app-card">
-                <div class="app-card-title">海外ニュースランキング</div>
-                <div class="app-card-desc">
-                    海外ニュースサイトを周回し、日本のニュースと思われる記事を独自アルゴリズムでランキング化します。
-                </div>
-                <div class="app-card-meta">
-                    ・タイトル＋リンク付きランキング<br>
-                    ・日本時間04:00の自動更新枠<br>
-                    ・管理者のみスコア内訳を確認可能
-                </div>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        if st.button("海外ニュースランキングを開く", type="primary", use_container_width=True):
-            go(APP_NEWS)
-
-    with col2:
-        st.markdown(
-            """
-            <div class="app-card">
                 <div class="app-card-title">法定開示情報チェッカー</div>
                 <div class="app-card-desc">
                     EDINET等の公開情報から抽出した重要箇所・要約レポート・CSVを確認できます。
@@ -161,6 +140,26 @@ def render_home() -> None:
         )
         if st.button("法定開示情報チェッカーを開く", type="primary", use_container_width=True):
             go(APP_EDINET)
+
+    with col2:
+        st.markdown(
+            """
+            <div class="app-card">
+                <div class="app-card-title">海外ニュースランキング</div>
+                <div class="app-card-desc">
+                    海外ニュースサイトを周回し、日本のニュースと思われる記事を独自アルゴリズムでランキング化します。
+                </div>
+                <div class="app-card-meta">
+                    ・タイトル＋リンク付きランキング<br>
+                    ・日本時間04:00の自動更新枠<br>
+                    ・管理者のみスコア内訳を確認可能
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        if st.button("海外ニュースランキングを開く", type="primary", use_container_width=True):
+            go(APP_NEWS)
 
 
 def main() -> None:
