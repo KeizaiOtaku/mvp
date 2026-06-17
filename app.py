@@ -61,8 +61,8 @@ def render_home() -> None:
         """
         <style>
         .home-wrap {
-            max-width: 1050px;
-            margin: 0 auto;
+            max-width: none;
+            margin: 0;
             padding: 1.5rem 0 0.5rem 0;
         }
         .home-title {
