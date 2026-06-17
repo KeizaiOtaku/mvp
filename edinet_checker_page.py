@@ -570,12 +570,12 @@ def render_public_page() -> None:
 # Main
 # -----------------------------
 def render_edinet_checker_page() -> None:
-    inject_google_analytics()
     render_admin_panel()
     render_public_page()
 
 
 def main() -> None:
+    inject_google_analytics()
     render_edinet_checker_page()
 
 
