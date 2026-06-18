@@ -2155,7 +2155,7 @@ def render_result_cards(df: pd.DataFrame) -> None:
 
 
 def render_news_ranking_page() -> None:
-    st.title("海外で話題の日本のニュース")
+    st.title("海外で話題の日本のニュース(毎日更新)")
     st.markdown(
         """
         <div style="color:#000000; font-size:0.95rem; line-height:1.6; margin-top:0.25rem; margin-bottom:1rem;">
