@@ -17,6 +17,88 @@ APP_NEWS = "news"
 APP_EDINET = "edinet"
 
 
+def inject_light_mode_css() -> None:
+    """Force readable light colors even when the phone/browser is in dark mode."""
+    st.markdown(
+        """
+        <style>
+        :root {
+            color-scheme: light !important;
+        }
+        html, body, .stApp,
+        [data-testid="stAppViewContainer"],
+        [data-testid="stMain"],
+        [data-testid="stMainBlockContainer"],
+        [data-testid="stVerticalBlock"],
+        [data-testid="stVerticalBlockBorderWrapper"] {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+        }
+        [data-testid="stHeader"],
+        [data-testid="stToolbar"],
+        [data-testid="stDecoration"] {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+        }
+        [data-testid="stSidebar"],
+        [data-testid="stSidebarContent"] {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+        }
+        [data-testid="stMarkdownContainer"],
+        [data-testid="stMarkdownContainer"] p,
+        [data-testid="stMarkdownContainer"] li,
+        [data-testid="stMarkdownContainer"] span,
+        [data-testid="stMarkdownContainer"] div,
+        [data-testid="stMarkdownContainer"] h1,
+        [data-testid="stMarkdownContainer"] h2,
+        [data-testid="stMarkdownContainer"] h3,
+        [data-testid="stMarkdownContainer"] h4,
+        [data-testid="stMarkdownContainer"] h5,
+        [data-testid="stMarkdownContainer"] h6,
+        label, p, li, span {
+            color: #111827 !important;
+        }
+        [data-testid="stCaptionContainer"],
+        [data-testid="stCaptionContainer"] p,
+        .caption, small {
+            color: #4b5563 !important;
+        }
+        a, a:visited {
+            color: #1d4ed8 !important;
+        }
+        hr {
+            border-color: #e5e7eb !important;
+        }
+        .stAlert,
+        [data-testid="stAlert"],
+        [data-testid="stExpander"],
+        [data-testid="stDataFrame"],
+        [data-testid="stTable"] {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+        }
+        input, textarea, select {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+            border-color: #d1d5db !important;
+        }
+        button[kind="secondary"],
+        [data-testid="stBaseButton-secondary"] {
+            background-color: #ffffff !important;
+            color: #111827 !important;
+            border-color: #d1d5db !important;
+        }
+        button[kind="primary"],
+        [data-testid="stBaseButton-primary"] {
+            color: #ffffff !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def go(page: str) -> None:
     st.session_state["active_app"] = page
     st.rerun()
@@ -149,6 +231,7 @@ def render_home() -> None:
 
 def main() -> None:
     inject_google_analytics()
+    inject_light_mode_css()
     init_state()
     render_global_sidebar()
     # 法定開示情報チェッカー側で使っていた右側リンクを全ページで共通表示する。
